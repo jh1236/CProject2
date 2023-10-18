@@ -4,6 +4,7 @@
 #include "main.h"
 #include "config.h"
 #include "find_files.h"
+#include "updateFiles.h"
 
 void usage(char name[]) {
     printf("Usage: %s [args] directory1  directory2  [directory3  ...]\n", name);
@@ -72,7 +73,17 @@ int main(int argc, char *argv[]) {
     }
     if (config.verboseMode) {
         printConfig(config);
+        printf("\n\n\n");
     }
-    list_all_files(config);
+    MySyncFile **d = listAllFiles(&config);
+    printf("func returned\n");
+    updateFiles(&config, d);
+    for (int i = 0; i < MAX_DIRECTORIES; i++) {
+        free(d[i]);
+        d[i] = NULL;
+    }
+    free(d);
+    d = NULL;
+    printf("Memory Free!");
     return 0;
 }

@@ -6,7 +6,16 @@
 #define PROJECT2_FIND_FILES_H
 
 #include "config.h"
+#define MAX_FILES_TO_COPY 200
+#define MAX_PATH_LENGTH 255
 
-extern void list_all_files(Config);
+typedef struct MySyncFile {
+    long long lastEdit;
+    char relativePath[MAX_PATH_LENGTH];
+    int directoryIndex;
+} MySyncFile;
+
+MySyncFile **listAllFiles(Config*);
+
 
 #endif //PROJECT2_FIND_FILES_H
