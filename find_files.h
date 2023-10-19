@@ -12,7 +12,9 @@
 typedef struct MySyncFile {
     long long lastEdit;
     char relativePath[MAX_PATH_LENGTH];
+    char filename[MAX_PATH_LENGTH];
     int directoryIndex;
+    int permissions;
 } MySyncFile;
 
 MySyncFile **listAllFiles(Config*);

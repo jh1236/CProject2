@@ -10,4 +10,8 @@ add_executable(Project2 main.c
         find_files.c
         find_files.h
         updateFiles.c
-        updateFiles.h)
+        updateFiles.h
+        FileManagement.c
+        FileManagement.h
+        GlobToRegex.c
+        GlobToRegex.h)

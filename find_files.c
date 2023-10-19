@@ -13,18 +13,19 @@
 #include <stdlib.h>
 #include  <sys/stat.h>
 #include  <string.h>
-//#include <regex.h>
-//
-//bool matchesRegex(char* regex, char*input) {
-//
-//    if ((rc = regcomp(&preg, pattern, REG_EXTENDED)) != 0) {
-//        printf("regcomp() failed, returning nonzero (%d)\n", rc);
-//        exit(1);
-//    }
-//}
+#include <regex.h>
 
+bool matchesRegex(char *regexString, char *input) {
+    if (regexString == NULL) return false;
+    regex_t regex;
+    regcomp(&regex, regexString, REG_EXTENDED);
+    int match = regexec(&regex, input, 0, NULL, 0);
+    return match == 0;
+}
 
+// 777 in octal
 int listIdx = 0;
+#define PERMISSIONS 511
 
 //TODO: This is O(n^2)....
 //Also IDK why this is warning me about recursion; I guess that's illegal?
@@ -66,6 +67,10 @@ void listAllFilesInternal(Config *c, char *path, MySyncFile **list) {
                 MySyncFile *f = malloc(sizeof(MySyncFile));
                 f->lastEdit = stats.st_mtime;
                 f->directoryIndex = i;
+                strcpy(f->filename, dp->d_name);
+                if (c->copyPermissions) {
+                    f->permissions = stats.st_mode & PERMISSIONS;
+                }
                 sprintf(f->relativePath, "%s/%s", path, dp->d_name);
                 list[listIdx++] = f;
             }
@@ -77,7 +82,6 @@ void listAllFilesInternal(Config *c, char *path, MySyncFile **list) {
 
 
 MySyncFile **listAllFiles(Config *c) {
-
     MySyncFile *list[MAX_FILES_TO_COPY];
     MySyncFile *output[MAX_FILES_TO_COPY];
     char names[MAX_FILES_TO_COPY][MAX_PATH_LENGTH];
@@ -94,7 +98,11 @@ MySyncFile **listAllFiles(Config *c) {
                 break;
             }
         }
-        if (shouldSkip) continue;
+        if (shouldSkip
+            || matchesRegex(c->excludePattern, file->filename)
+            || (c->includePattern != NULL && !matchesRegex(c->includePattern, file->filename))) {
+            continue;
+        }
         strcpy(names[namesLength++], file->relativePath);
 
         MySyncFile *bestFile = list[i];
@@ -105,7 +113,11 @@ MySyncFile **listAllFiles(Config *c) {
                 bestFile = list[j];
             }
         }
-        printf("%s%s is the most up to date!\n", c->directories[bestFile->directoryIndex], bestFile->relativePath);
+        if (c->verboseMode) {
+            printf("%s%s is the most up to date! it's permission number is %i\n",
+                   c->directories[bestFile->directoryIndex],
+                   bestFile->relativePath, bestFile->permissions);
+        }
         output[len++] = bestFile;
     }
 

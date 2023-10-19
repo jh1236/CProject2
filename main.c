@@ -5,6 +5,7 @@
 #include "config.h"
 #include "find_files.h"
 #include "updateFiles.h"
+#include "GlobToRegex.h"
 
 void usage(char name[]) {
     printf("Usage: %s [args] directory1  directory2  [directory3  ...]\n", name);
@@ -17,7 +18,6 @@ void usage(char name[]) {
     printf("\t-r\t\t:\trecursively search for files\n");
     printf("\t-v\t\t:\tverbose mode (log all output)\n");
 }
-
 
 
 int main(int argc, char *argv[]) {
@@ -39,14 +39,16 @@ int main(int argc, char *argv[]) {
                     config.allMode = true;
                     break;
                 case 'i':
-                    config.includePattern = argv[++i];   //increment i to avoid processing pattern as argument
+                    config.includePattern = glob2regex(
+                            argv[++i]);   //increment i to avoid processing pattern as argument
                     break;
                 case 'n':
                     config.shouldWrite = false;
                     config.verboseMode = true;
                     break;
                 case 'o':
-                    config.excludePattern = argv[++i];  //increment i to avoid processing pattern as argument
+                    config.excludePattern = glob2regex(
+                            argv[++i]);  //increment i to avoid processing pattern as argument
                     break;
                 case 'p':
                     config.copyPermissions = true;
@@ -76,13 +78,18 @@ int main(int argc, char *argv[]) {
         printf("\n\n\n");
     }
     MySyncFile **d = listAllFiles(&config);
-    printf("func returned\n");
     updateFiles(&config, d);
     for (int i = 0; i < MAX_DIRECTORIES; i++) {
         free(d[i]);
         d[i] = NULL;
     }
     free(d);
+    if (config.includePattern != NULL) {
+        free(config.includePattern);
+    }
+    if (config.excludePattern != NULL) {
+        free(config.excludePattern);
+    }
     d = NULL;
     printf("Memory Free!");
     return 0;

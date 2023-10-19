@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include "updateFiles.h"
 #include "find_files.h"
+#include "FileManagement.h"
 
 bool fileExists(char *filename) {
     if (access(filename, F_OK) == 0) {
@@ -22,14 +23,7 @@ void updateFiles(Config *c, MySyncFile **d) {
         if (c->verboseMode) {
             printf("%s%s is most recent file\n", c->directories[d[i]->directoryIndex], d[i]->relativePath);
         }
-        if (c->shouldWrite) {
-            for (int j = 0; j < MAX_DIRECTORIES; j++) {
-                if (c->directories[j] == NULL) break;
-                if (0 == strcmp(c->directories[d[i]->directoryIndex], c->directories[j])) continue;
-                printf("Copying from %s to %s\n", c->directories[d[i]->directoryIndex], c->directories[j]);
-            }
-        }
+        updateFile(c, d[i]);
         i++;
     }
-    printf("Im here!!\n");
 }

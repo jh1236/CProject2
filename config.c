@@ -12,10 +12,10 @@ void printConfig(Config c) {
     printf("Verbose Mode\t: %s\n", c.verboseMode ? "true" : "false");
     printf("Recursive Mode\t: %s\n", c.recursive ? "true" : "false");
     if (c.includePattern != NULL) {
-        printf("Include Pattern\t: %s", c.includePattern);
+        printf("Include Pattern\t: %s\n", c.includePattern);
     }
     if (c.excludePattern != NULL) {
-        printf("Exclude Pattern\t: %s", c.includePattern);
+        printf("Exclude Pattern\t: %s\n", c.includePattern);
     }
     printf("Directories:\t:\n");
     for (int i = 0; i < MAX_DIRECTORIES; i++) {
