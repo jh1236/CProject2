@@ -5,7 +5,7 @@
 #ifndef PROJECT2_FIND_FILES_H
 #define PROJECT2_FIND_FILES_H
 
-#include "config.h"
+#include "Config.h"
 #define MAX_FILES_TO_COPY 200
 #define MAX_PATH_LENGTH 255
 

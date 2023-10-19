@@ -2,7 +2,7 @@
 // Created by healy on 11/10/2023.
 //
 
-#include "config.h"
+#include "Config.h"
 #include <stdio.h>
 
 void printConfig(Config c) {
@@ -15,7 +15,7 @@ void printConfig(Config c) {
         printf("Include Pattern\t: %s\n", c.includePattern);
     }
     if (c.excludePattern != NULL) {
-        printf("Exclude Pattern\t: %s\n", c.includePattern);
+        printf("Exclude Pattern\t: %s\n", c.excludePattern);
     }
     printf("Directories:\t:\n");
     for (int i = 0; i < MAX_DIRECTORIES; i++) {

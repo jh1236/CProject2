@@ -16,10 +16,13 @@ void updateFile(Config *c, MySyncFile *file) {
         char newFilename[MAX_PATH_LENGTH] = "";
         char currentPath[MAX_PATH_LENGTH] = "";
         char toBeCreated[MAX_PATH_LENGTH] = "";
-        strcpy(toBeCreated, file->relativePath+1);
+        strcpy(toBeCreated, file->relativePath + 1);
         while (strchr(toBeCreated, '/')) {
-            sprintf(currentPath, "%s%s/", currentPath, strtok(toBeCreated, "/"));
-            sprintf(newFilename, "%s/%s", c->directories[i], currentPath);
+            strcat(currentPath, strtok(toBeCreated, "/"));
+            strcat(currentPath, "/");
+            strcpy(newFilename, c->directories[i]);
+            strcat(newFilename, "/");
+            strcat(newFilename, currentPath);
             struct stat st;
             if (stat(newFilename, &st) == -1) {
                 if (c->shouldWrite) {

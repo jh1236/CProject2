@@ -6,7 +6,7 @@
 
 #define PROJECT2_UPDATEFILES_H
 
-#include "find_files.h"
+#include "FindFiles.h"
 
 void updateFiles(Config *, MySyncFile **);
 

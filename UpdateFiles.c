@@ -5,8 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "updateFiles.h"
-#include "find_files.h"
+#include "UpdateFiles.h"
+#include "FindFiles.h"
 #include "FileManagement.h"
 
 bool fileExists(char *filename) {

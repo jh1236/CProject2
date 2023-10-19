@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "main.h"
-#include "config.h"
-#include "find_files.h"
-#include "updateFiles.h"
+#include "Config.h"
+#include "FindFiles.h"
+#include "UpdateFiles.h"
 #include "GlobToRegex.h"
 
 void usage(char name[]) {
@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
     MySyncFile **d = listAllFiles(&config);
     updateFiles(&config, d);
     for (int i = 0; i < MAX_DIRECTORIES; i++) {
+        if(d[i] ==NULL) break;
         free(d[i]);
         d[i] = NULL;
     }

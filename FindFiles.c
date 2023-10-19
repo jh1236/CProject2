@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
-#include "find_files.h"
+#include "FindFiles.h"
 
 #include  <stdio.h>
 #include  <sys/types.h>
@@ -27,7 +27,6 @@ bool matchesRegex(char *regexString, char *input) {
 int listIdx = 0;
 #define PERMISSIONS 511
 
-//TODO: This is O(n^2)....
 //Also IDK why this is warning me about recursion; I guess that's illegal?
 void listAllFilesInternal(Config *c, char *path, MySyncFile **list) {
     char pathFromDirectory[MAX_PATH_LENGTH];
@@ -45,18 +44,22 @@ void listAllFilesInternal(Config *c, char *path, MySyncFile **list) {
         while ((dp = readdir(folder)) != NULL) {
             if (dp->d_name[0] == '.' && !c->allMode) continue;
             struct stat stats;
-            char fullPath[MAX_PATH_LENGTH];
+            char fullPath[MAX_PATH_LENGTH * 2];
 
-            sprintf(fullPath, "%s/%s", pathFromDirectory, dp->d_name);
+            strcpy(fullPath, pathFromDirectory);
+            strcat(fullPath, "/");
+            strcat(fullPath, dp->d_name);
             if (stat(fullPath, &stats) != 0) {
-                perror("boobs");  //TODO: probably dont leave in
+                perror("Error");
             } else if (S_ISDIR(stats.st_mode)) {
                 if (c->recursive && dp->d_name[0] != '.') {
                     if (c->verboseMode) {
                         printf("entering folder %s\n", fullPath);
                     }
                     char prefix2[MAX_PATH_LENGTH];
-                    sprintf(prefix2, "%s/%s", path, dp->d_name);
+                    strcpy(prefix2, path);
+                    strcat(prefix2, "/");
+                    strcat(prefix2, dp->d_name);
                     listAllFilesInternal(c, prefix2, list);
                 }
             } else if (S_ISREG(stats.st_mode)) {
@@ -71,7 +74,9 @@ void listAllFilesInternal(Config *c, char *path, MySyncFile **list) {
                 if (c->copyPermissions) {
                     f->permissions = stats.st_mode & PERMISSIONS;
                 }
-                sprintf(f->relativePath, "%s/%s", path, dp->d_name);
+                strcpy(f->relativePath, path);
+                strcat(f->relativePath, "/");
+                strcat(f->relativePath, dp->d_name);
                 list[listIdx++] = f;
             }
         }

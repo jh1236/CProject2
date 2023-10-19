@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.22.1)
-project(Project2 C)
+project(mysync C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Project2 main.c
+add_executable(mysync main.c
         main.h
-        config.c
-        config.h
-        find_files.c
-        find_files.h
-        updateFiles.c
-        updateFiles.h
+        Config.c
+        Config.h
+        FindFiles.c
+        FindFiles.h
+        UpdateFiles.c
+        UpdateFiles.h
         FileManagement.c
         FileManagement.h
         GlobToRegex.c
