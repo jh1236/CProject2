@@ -9,8 +9,6 @@ add_executable(mysync main.c
         Config.h
         FindFiles.c
         FindFiles.h
-        UpdateFiles.c
-        UpdateFiles.h
         FileManagement.c
         FileManagement.h
         GlobToRegex.c

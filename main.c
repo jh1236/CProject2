@@ -1,11 +1,16 @@
+//  CITS2002 Project 2 2023
+//  Student1:   23398223        Jared Healy
+//  Student2:   21985625        Jacob Monteath
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "main.h"
 #include "Config.h"
 #include "FindFiles.h"
-#include "UpdateFiles.h"
 #include "GlobToRegex.h"
+#include "FileManagement.h"
 
 void usage(char name[]) {
     printf("Usage: %s [args] directory1  directory2  [directory3  ...]\n", name);
@@ -28,9 +33,12 @@ int main(int argc, char *argv[]) {
     }
     Config config = {
             .allMode = false, .copyPermissions=false, .shouldWrite=true, .recursive=false, .verboseMode=false,
-            .excludePattern=NULL, .includePattern = NULL
+            .excludePattern = {NULL}, .includePattern = {NULL}
     };
     int fileCount = 0;
+    int includesCount = 0;
+    int excludeCount = 0;
+    //go through all the args
     for (int i = 1; i < argc; i++) {
         char *arg = argv[i];
         if (arg[0] == '-') {
@@ -38,17 +46,20 @@ int main(int argc, char *argv[]) {
                 case 'a':
                     config.allMode = true;
                     break;
-                case 'i':
-                    config.includePattern = glob2regex(
-                            argv[++i]);   //increment i to avoid processing pattern as argument
+                case 'o': {
+                    char *retv = glob2regex(argv[++i]);
+                    printf("%s\n", retv);
+                    config.includePattern[includesCount++] = retv;
+                    //increment i to avoid processing pattern as argument
                     break;
+                }
                 case 'n':
                     config.shouldWrite = false;
                     config.verboseMode = true;
                     break;
-                case 'o':
-                    config.excludePattern = glob2regex(
-                            argv[++i]);  //increment i to avoid processing pattern as argument
+                case 'i':
+                    config.excludePattern[excludeCount++] = glob2regex(argv[++i]);
+                    //increment i to avoid processing pattern as argument
                     break;
                 case 'p':
                     config.copyPermissions = true;
@@ -65,9 +76,8 @@ int main(int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
             }
         } else {
-            //TODO make this dynamic?
             if (fileCount >= MAX_DIRECTORIES - 1) {
-                printf("That's too many directories!!\n");
+                printf("Too many directories!!\n");
                 exit(EXIT_FAILURE);
             }
             config.directories[fileCount++] = arg;
@@ -79,17 +89,24 @@ int main(int argc, char *argv[]) {
     }
     MySyncFile **d = listAllFiles(&config);
     updateFiles(&config, d);
+    //return the memory to its rightful owner
     for (int i = 0; i < MAX_DIRECTORIES; i++) {
-        if(d[i] ==NULL) break;
+        if (d[i] == NULL) break;
+        if (strcmp(d[i]->relativePath, "NONE") == 0) {  //this is our 'NULL' file equivalent.
+            free(d[i]);
+            break;
+        }
         free(d[i]);
         d[i] = NULL;
     }
     free(d);
-    if (config.includePattern != NULL) {
-        free(config.includePattern);
+    for (int j = 0; j < MAX_INCLUDE_ARGUMENTS; j++) {
+        if (config.includePattern[j] == NULL) break;
+        free(config.includePattern[j]);
     }
-    if (config.excludePattern != NULL) {
-        free(config.excludePattern);
+    for (int j = 0; j < MAX_INCLUDE_ARGUMENTS; j++) {
+        if (config.excludePattern[j] == NULL) break;
+        free(config.excludePattern[j]);
     }
     d = NULL;
     printf("Memory Free!");

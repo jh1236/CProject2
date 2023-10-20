@@ -1,7 +1,3 @@
-//
-// Created by healy on 11/10/2023.
-//
-
 #include <stdbool.h>
 
 #ifndef PROJECT2_MAIN_H

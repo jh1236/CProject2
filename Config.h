@@ -1,14 +1,10 @@
-//
-// Created by healy on 11/10/2023.
-//
-
 #ifndef PROJECT2_CONFIG_H
 #define PROJECT2_CONFIG_H
 
 #include <stdbool.h>
 
-#define MAX_DIRECTORIES 5
-
+#define MAX_DIRECTORIES 10
+#define MAX_INCLUDE_ARGUMENTS 10
 
 typedef struct Config {
     bool allMode;
@@ -16,8 +12,8 @@ typedef struct Config {
     bool copyPermissions;
     bool recursive;
     bool verboseMode;
-    char *includePattern;
-    char *excludePattern;
+    char *includePattern[MAX_INCLUDE_ARGUMENTS];
+    char *excludePattern[MAX_INCLUDE_ARGUMENTS];
     char *directories[MAX_DIRECTORIES];
 } Config;
 
