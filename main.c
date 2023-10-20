@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
                     break;
                 case 'o': {
                     char *retv = glob2regex(argv[++i]);
+                    if (retv == NULL) continue;
                     printf("%s\n", retv);
                     config.includePattern[includesCount++] = retv;
                     //increment i to avoid processing pattern as argument
@@ -57,10 +58,13 @@ int main(int argc, char *argv[]) {
                     config.shouldWrite = false;
                     config.verboseMode = true;
                     break;
-                case 'i':
-                    config.excludePattern[excludeCount++] = glob2regex(argv[++i]);
+                case 'i': {
+                    char *retv = glob2regex(argv[++i]);
+                    if (retv == NULL) continue;
+                    config.excludePattern[excludeCount++] = glob2regex(retv);
                     //increment i to avoid processing pattern as argument
                     break;
+                }
                 case 'p':
                     config.copyPermissions = true;
                     break;
@@ -109,6 +113,6 @@ int main(int argc, char *argv[]) {
         free(config.excludePattern[j]);
     }
     d = NULL;
-    printf("Memory Free!");
+    printf("Files Successfully synchronised!\n");
     return 0;
 }
